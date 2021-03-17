@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  root 'main#index'
+
   scope '/api' do
 
     get 'contacts', to: 'contacts#index'
