@@ -2,8 +2,10 @@ import { ThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import React from "react";
 
 export const theme = createMuiTheme({
+	spacing: 16,
 	typography: {
 		fontWeight: 400,
+		fontSize: 16,
 		h1: {
 			fontSize: "4rem",
 			fontWeight: 800
