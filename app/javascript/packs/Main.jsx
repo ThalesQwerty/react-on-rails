@@ -2,15 +2,22 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import PropTypes from 'prop-types'
 
+import 'fontsource-roboto';
+
+import { 
+    MuiThemeProvider
+} from '@material-ui/core';
+
+import { theme } from '../styles/theme.js';
+
+import Index from '../pages/Index.jsx';
+
 function Main() {
-    return <div>
-        <h1>
-        Hello World!
-        </h1>
-        <p>
-        Well, it seems like React is working :)
-        </p>
-    </div>
+    return (
+        <MuiThemeProvider theme={theme}>
+            <Index />
+        </MuiThemeProvider>
+    );
 }
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -2,8 +2,11 @@
   "name": "React_on_Rails",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.11.3",
+    "@material-ui/styles": "^4.11.3",
     "@rails/webpacker": "3.5",
     "babel-preset-react": "^6.24.1",
+    "fontsource-roboto": "^4.0.0",
     "prop-types": "^15.7.2",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
