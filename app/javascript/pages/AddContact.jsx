@@ -5,21 +5,26 @@ import 'fontsource-roboto';
 
 import { makeStyles } from '@material-ui/styles';
 
+import axios from 'axios';
+
 import { 
     Container, 
     Grid,
     TextField,
     Paper,
-    Button
+    Button,
+    IconButton
 } from '@material-ui/core';
 
 import Header from '../components/Header';
+import Spinner from '../components/Spinner';
 
 import { 
     AddCircle as AddCircleIcon,
     Clear as ClearIcon,
     Phone as PhoneIcon,
-    AccountCircle as AccountCircleIcon
+    AccountCircle as AccountCircleIcon,
+    Delete as DeleteIcon
 } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
@@ -44,6 +49,46 @@ const useStyles = makeStyles((theme) => ({
 export default function Index(props) {
     const classes = useStyles();
     const createNew = props.id == null;
+    const [contact, setContact] = useState(null);
+    const info = contact || {id: props.id};
+
+    if (!createNew && contact == null) {
+        axios.get('/api/contacts/' + props.id).then((resp) => {
+            setContact(resp.data);
+        }).catch((error) => {
+            props.setSnack({
+                message: 'An unknown error has occurred',
+                severity: 'error'
+            });
+        })
+    }
+
+    function apiUpdate() {
+        axios.post('/api/contacts/' + (createNew ? '' : props.id), info).then((resp) => {
+            props.setSnack({
+                message: resp.data.message,
+                severity: resp.data.success ? 'success' : 'error'
+            });
+            if (resp.data.success) props.routes.home();
+        }).catch((error) => {
+            props.setSnack({
+                message: 'An unknown error has occurred',
+                severity: 'error'
+            });
+        })
+    }
+
+    function apiDelete() {
+        if (!createNew && window.confirm("Are you sure you want to delete this contact? This action is irreversible.")) {
+            axios.delete('/api/contacts/' + props.id).then((resp) => {
+                props.setSnack({
+                    message: resp.data.message,
+                    severity: resp.data.success ? 'success' : 'error'
+                });
+                if (resp.data.success) props.routes.home();
+            });
+        }
+    }
     
     return (
         <Container className={classes.container}>
@@ -53,41 +98,71 @@ export default function Index(props) {
                         <Header
                             title={createNew ? 'New contact' : 'Edit contact'}
                             subtitle=''
-                        />
+                        >
+                            {
+                                createNew ? undefined : 
+                                    <IconButton 
+                                        color='secondary'
+                                        onClick={apiDelete}
+                                    >
+                                        <DeleteIcon />
+                                    </IconButton>
+                            }
+                        </Header>
                     </Grid>
-                    <Grid item xs={12} container spacing={1} alignItems='center'>
-                        <Grid item>
-                            <AccountCircleIcon />
+                    {  
+                        contact || createNew ? <Grid item xs={12} container spacing={2}>
+                            <Grid item xs={12} container spacing={1} alignItems='center'>
+                                <Grid item>
+                                    <AccountCircleIcon />
+                                </Grid>
+                                <Grid item className={classes.input}>
+                                    <TextField
+                                        fullWidth
+                                        color='secondary'
+                                        variant='filled'
+                                        label='Contact name'
+                                        value={contact ? contact.name : ''}
+                                        type='text'
+                                        onChange={(ev) => {
+                                            setContact({
+                                                ...contact,
+                                                name: ev.target.value
+                                            });
+                                        }}
+                                    />
+                                </Grid> 
+                            </Grid>
+                            <Grid item xs={12} container spacing={1} alignItems='center'>
+                                <Grid item>
+                                    <PhoneIcon />
+                                </Grid>
+                                <Grid item className={classes.input}>
+                                    <TextField
+                                        fullWidth
+                                        color='secondary'
+                                        variant='filled'
+                                        label='Phone number'
+                                        value={contact ? contact.phone : ''}
+                                        type='text'
+                                        onChange={(ev) => {
+                                            setContact({
+                                                ...contact,
+                                                phone: ev.target.value
+                                            });
+                                        }}
+                                    />
+                                </Grid>
+                            </Grid>
                         </Grid>
-                        <Grid item className={classes.input}>
-                            <TextField
-                                fullWidth
-                                color='secondary'
-                                variant='filled'
-                                label='Contact name'
-                                type='text'
-                            />
-                        </Grid> 
-                    </Grid>
-                    <Grid item xs={12} container spacing={1} alignItems='center'>
-                        <Grid item>
-                            <PhoneIcon />
-                        </Grid>
-                        <Grid item className={classes.input}>
-                            <TextField
-                                fullWidth
-                                color='secondary'
-                                variant='filled'
-                                label='Phone number'
-                                type='text'
-                            />
-                        </Grid>
-                    </Grid>
+                        :   <Spinner />
+                    }
                     <Grid item container xs={12} justify='space-between'>
                         <Button
                             variant='contained'
                             color='secondary'
                             startIcon={<AddCircleIcon/>}
+                            onClick={apiUpdate}
                         >
                             {createNew ? "Create new contact" : "Save changes"}
                         </Button>

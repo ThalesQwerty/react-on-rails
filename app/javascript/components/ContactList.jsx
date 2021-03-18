@@ -25,8 +25,9 @@ export default function ContactList(props) {
     
     return (<List className={classes.root}>
         {
-            props.contacts.map(contact => (
+            props.contacts.map((contact, index) => (
                 <ListItem 
+                    key={index}
                     button
                     onClick={() => props.clickHandler(contact.id)}
                 >

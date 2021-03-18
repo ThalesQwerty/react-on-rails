@@ -8,11 +8,11 @@ Rails.application.routes.draw do
 
     get 'contacts/:id', to: 'contacts#show'
 
-    get 'contacts/create', to: 'contacts#create'
+    post 'contacts', to: 'contacts#create'
 
-    get 'contacts/update/:id', to: 'contacts#update'
+    post 'contacts/:id', to: 'contacts#update'
 
-    get 'contacts/delete/:id', to: 'contacts#destroy'
+    delete 'contacts/:id', to: 'contacts#destroy'
 
   end
 

@@ -2,6 +2,8 @@ import React from 'react'
 import { useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 
+import axios from 'axios';
+
 import { 
     Container, 
     Grid,
@@ -13,6 +15,7 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 import Header from '../components/Header';
 import ContactList from '../components/ContactList';
+import Spinner from '../components/Spinner';
 
 const useStyles = makeStyles((theme) => ({
     container: {
@@ -28,16 +31,17 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const mock = [
-    {id: 1, name: "Contact #1", phone: "(11) 11111-1111"},
-    {id: 2, name: "Contact #2", phone: "(22) 22222-2222"},
-    {id: 3, name: "Contact #3", phone: "(33) 33333-3333"},
-];
-
 export default function Home(props) {
     const classes = useStyles();
 
-    const [contacts, setContacts] = useState(mock);
+    const [contacts, setContacts] = useState(null);
+
+    if (!contacts) {
+        axios.get("/api/contacts").then((resp) => {
+            setContacts(resp.data);
+        });
+    }
+    
     
     return (
         <Container className={classes.container}>
@@ -61,10 +65,14 @@ export default function Home(props) {
                         </Header>
                     </Grid>
                     <Grid item xs={12}>
-                        <ContactList
-                            contacts={contacts}
-                            clickHandler={props.routes.editContact}
-                        />
+                        { 
+                            contacts ? 
+                                <ContactList
+                                    contacts={contacts}
+                                    clickHandler={props.routes.editContact}
+                                /> 
+                            :   <Spinner />
+                        }
                     </Grid>
                 </Grid>
             </Paper>
