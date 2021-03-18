@@ -23,10 +23,13 @@ import ContactAvatar from "./ContactAvatar";
 export default function ContactList(props) {
     const classes = useStyles();
     
-    return (<List class={classes.root}>
+    return (<List className={classes.root}>
         {
             props.contacts.map(contact => (
-                <ListItem button>
+                <ListItem 
+                    button
+                    onClick={() => props.clickHandler(contact.id)}
+                >
                     <ListItemIcon>
                         <ContactAvatar name={contact.name} />
                     </ListItemIcon>

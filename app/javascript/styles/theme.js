@@ -3,6 +3,9 @@ import React from "react";
 
 export const theme = createMuiTheme({
 	spacing: 16,
+	palette: {
+		type: 'dark'
+	},
 	typography: {
 		fontWeight: 400,
 		fontSize: 16,

@@ -8,8 +8,6 @@ import {
     Button
 } from '@material-ui/core';
 
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
@@ -24,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function Header() {
+export default function Header(props) {
     const classes = useStyles();
     
     return (
@@ -32,21 +30,13 @@ export default function Header() {
             <div className={classes.root}>
                 <div>
                     <h1 className={classes.h1}>
-                        Contacts on Rails
+                        { props.title }
                     </h1>
                     <p className={classes.p}>
-                        Powered by React and Rails
+                        { props.subtitle }
                     </p>
                 </div>
-                <div>
-                    <Button 
-                        variant='contained' 
-                        color='primary' 
-                        startIcon={<AddCircleIcon/>}
-                    >
-                        Add new contact
-                    </Button>
-                </div>
+                { props.children }
             </div>
             <hr/>
         </div>

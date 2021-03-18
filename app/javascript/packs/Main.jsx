@@ -9,7 +9,7 @@ import {
 
 import { theme } from '../styles/theme.js';
 
-import Index from '../pages/Index.jsx';
+import Index from '../Index.jsx';
 
 function Main() {
     return (

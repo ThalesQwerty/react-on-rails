@@ -1,16 +1,15 @@
 import React from 'react'
 import { useState } from 'react';
-
-import 'fontsource-roboto';
-
 import { makeStyles } from '@material-ui/styles';
 
 import { 
     Container, 
     Grid,
-    TextField,
-    Paper
+    Paper,
+    Button
 } from '@material-ui/core';
+
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 import Header from '../components/Header';
 import ContactList from '../components/ContactList';
@@ -30,28 +29,41 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const mock = [
-    {name: "Contact #1", phone: "(11) 11111-1111"},
-    {name: "Contact #2", phone: "(22) 22222-2222"},
-    {name: "Contact #3", phone: "(33) 33333-3333"},
+    {id: 1, name: "Contact #1", phone: "(11) 11111-1111"},
+    {id: 2, name: "Contact #2", phone: "(22) 22222-2222"},
+    {id: 3, name: "Contact #3", phone: "(33) 33333-3333"},
 ];
 
-export default function Index() {
+export default function Home(props) {
     const classes = useStyles();
 
     const [contacts, setContacts] = useState(mock);
-
-    console.log(contacts);
     
     return (
         <Container className={classes.container}>
             <Paper variant='elevation' className={classes.paper}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <Header />
+                        <Header
+                            title="Contacts on Rails"
+                            subtitle="Powered by React"
+                        >
+                            <div>
+                                <Button 
+                                    variant='contained' 
+                                    color='secondary' 
+                                    startIcon={<AddCircleIcon/>}
+                                    onClick={props.routes.addContact}
+                                >
+                                    Add new contact
+                                </Button>
+                            </div>
+                        </Header>
                     </Grid>
                     <Grid item xs={12}>
                         <ContactList
                             contacts={contacts}
+                            clickHandler={props.routes.editContact}
                         />
                     </Grid>
                 </Grid>

@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 
         padding: 0,
 
-        backgroundColor: 'black',
+        backgroundColor: theme.palette.secondary.main,
         color: 'white',
         borderRadius: '100%'
     }
@@ -26,7 +26,7 @@ export default function ContactList(props) {
     const classes = useStyles();
     
     return (
-        <div class={classes.circle}>
+        <div className={classes.circle}>
             <Typography variant="h6">
                 { props.name[0].toUpperCase() }
             </Typography>
