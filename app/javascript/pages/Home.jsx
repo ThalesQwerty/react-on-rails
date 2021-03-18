@@ -23,11 +23,24 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         width: '100vw',
         maxWidth: 1000,
+        height: '100vh',
+        maxHeight: 600,
         padding: 0,
     },
     paper: {
         width: '100%',
+        height: '100%',
         padding: theme.spacing(2)
+    },
+    childContainer: {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
+    },
+    contactList: {
+        display: 'flex',
+        flexGrow: 1
     }
 }));
 
@@ -46,35 +59,32 @@ export default function Home(props) {
     return (
         <Container className={classes.container}>
             <Paper variant='elevation' className={classes.paper}>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <Header
-                            title="Contacts on Rails"
-                            subtitle="Powered by React"
-                        >
-                            <div>
-                                <Button 
-                                    variant='contained' 
-                                    color='secondary' 
-                                    startIcon={<AddCircleIcon/>}
-                                    onClick={props.routes.addContact}
-                                >
-                                    Add new contact
-                                </Button>
-                            </div>
-                        </Header>
-                    </Grid>
-                    <Grid item xs={12}>
-                        { 
-                            contacts ? 
-                                <ContactList
-                                    contacts={contacts}
-                                    clickHandler={props.routes.editContact}
-                                /> 
-                            :   <Spinner />
-                        }
-                    </Grid>
-                </Grid>
+                <div className={classes.childContainer}>
+                    <Header
+                        title="Contacts on Rails"
+                        subtitle="Powered by React"
+                    >
+                        <div>
+                            <Button 
+                                variant='contained' 
+                                color='secondary' 
+                                startIcon={<AddCircleIcon/>}
+                                onClick={props.routes.addContact}
+                            >
+                                Add new contact
+                            </Button>
+                        </div>
+                    </Header>
+                    { 
+                        contacts ? 
+                            <ContactList
+                                className={classes.contactList}
+                                contacts={contacts}
+                                clickHandler={props.routes.editContact}
+                            /> 
+                        :   <Spinner />
+                    }
+                </div>
             </Paper>
         </Container>
     );

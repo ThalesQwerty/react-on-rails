@@ -2,10 +2,16 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+$bgColor: #212121;
+
+$scrollColor: #ffffff22;
+$scrollBgColor: #00000000;
+$scrollThickness: 4px;
+
 body {
     font-family: Roboto;
 
-    background-color: #212121;
+    background-color: $bgColor;
 
     width: 100vw;
     height: 100vh;
@@ -14,4 +20,24 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/* Works on Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: $scrollColor $scrollBgColor;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: $scrollThickness;
+}
+
+*::-webkit-scrollbar-track {
+    background: $scrollBgColor;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: $scrollColor;
+    border-radius: $scrollThickness;
 }

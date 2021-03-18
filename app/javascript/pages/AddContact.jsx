@@ -33,6 +33,8 @@ const useStyles = makeStyles((theme) => ({
         alignItems: 'center',
         width: '100vw',
         maxWidth: 750,
+        height: '100vh',
+        maxHeight: 600,
         padding: 0,
     },
     paper: {

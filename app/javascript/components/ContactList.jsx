@@ -14,7 +14,10 @@ import { makeStyles } from '@material-ui/styles';
 const useStyles = makeStyles((theme) => ({
     root: {
         textAlign: 'left',
-        padding: 0
+        padding: 0,
+        height: '100%',
+        overflowY: 'scroll',
+        overflowX: 'hidden'
     }
 }));
 
@@ -22,7 +25,7 @@ import ContactAvatar from "./ContactAvatar";
 
 export default function ContactList(props) {
     const classes = useStyles();
-    
+
     return (<List className={classes.root}>
         {
             props.contacts.map((contact, index) => (
