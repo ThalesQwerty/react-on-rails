@@ -13,7 +13,12 @@ import {
     TextField,
     Paper,
     Button,
-    IconButton
+    IconButton,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle
 } from '@material-ui/core';
 
 import Header from '../components/Header';
@@ -30,6 +35,13 @@ import {
 } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
+    buttons: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        paddingBottom: theme.spacing(1),
+        paddingLeft: theme.spacing(2),
+        paddingRight: theme.spacing(2)
+    },
     container: {
         justifyContent: 'center',
         alignItems: 'center',
@@ -46,35 +58,28 @@ const useStyles = makeStyles((theme) => ({
     input: {
         display: 'flex',
         flexGrow: 1,
-        paddingRight: 0
+        paddingRight: 0,
+        marginBottom: theme.spacing(1)
     }
 }));
 
-export default function Index(props) {
+export default function AddContact(props) {
     const classes = useStyles();
-    const createNew = props.id == null;
-    const [contact, setContact] = useState(null);
-    const info = contact || {id: props.id};
 
-    if (!createNew && contact == null) {
-        axios.get('/api/contacts/' + props.id).then((resp) => {
-            setContact(resp.data);
-        }).catch((error) => {
-            props.setSnack({
-                message: 'An unknown error has occurred',
-                severity: 'error'
-            });
-        })
-    }
+    const createNew = props.contact == null;
+    const contact = props.contact || {id: null, name: '', phone: '55'};
+
+    console.log(contact);
 
     function apiUpdate() {
-        axios.post('/api/contacts/' + (createNew ? '' : props.id), info).then((resp) => {
+        axios.post('/api/contacts/' + (createNew ? '' : contact.id), contact).then((resp) => {
             props.setSnack({
                 message: resp.data.message,
                 severity: resp.data.success ? 'success' : 'error'
             });
-            if (resp.data.success) props.routes.home();
+            if (resp.data.success) props.methods.save();
         }).catch((error) => {
+            console.log(error);
             props.setSnack({
                 message: 'An unknown error has occurred',
                 severity: 'error'
@@ -84,116 +89,117 @@ export default function Index(props) {
 
     function apiDelete() {
         if (!createNew && window.confirm("Are you sure you want to delete this contact? This action is irreversible.")) {
-            axios.delete('/api/contacts/' + props.id).then((resp) => {
+            axios.delete('/api/contacts/' + contact.id).then((resp) => {
                 props.setSnack({
                     message: resp.data.message,
                     severity: resp.data.success ? 'success' : 'error'
                 });
-                if (resp.data.success) props.routes.home();
+                if (resp.data.success) props.methods.save();
             });
         }
     }
+
+    console.log(props.id);
+
+    function close() {
+        props.methods.cancel();
+    }
     
     return (
-        <Container className={classes.container}>
-            <Paper variant='elevation' className={classes.paper}>
-                <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <Header
-                            title={createNew ? 'New contact' : 'Edit contact'}
-                            subtitle=''
-                        >
-                            {
-                                createNew ? undefined : 
-                                    <IconButton 
-                                        color='secondary'
-                                        onClick={apiDelete}
-                                    >
-                                        <DeleteIcon />
-                                    </IconButton>
-                            }
-                        </Header>
-                    </Grid>
-                    {  
-                        contact || createNew ? <Grid item xs={12} container spacing={2}>
-                            <Grid item xs={12} container spacing={1} alignItems='center'>
-                                <Grid item>
-                                    <AccountCircleIcon />
-                                </Grid>
-                                <Grid item className={classes.input}>
-                                    <TextField
-                                        fullWidth
-                                        color='secondary'
-                                        variant='filled'
-                                        label='Contact name'
-                                        value={contact ? contact.name : ''}
-                                        type='text'
-                                        onChange={(ev) => {
-                                            setContact({
-                                                ...contact,
-                                                name: ev.target.value
-                                            });
-                                        }}
-                                    />
-                                </Grid> 
+        <Dialog 
+            open={props.open} 
+            onClose={close}
+            aria-labelledby="form-dialog-title" 
+            fullWidth={true}
+            maxWidth={'sm'}
+        >
+            <DialogTitle id="form-dialog-title">
+                {createNew ? 'New contact' : 'Edit contact'}
+            </DialogTitle>
+            <DialogContent>
+                {  
+                    contact || createNew ? 
+                    <div>
+                        <Grid container spacing={1} alignItems='center'>
+                            <Grid item>
+                                <AccountCircleIcon />
                             </Grid>
-                            <Grid item xs={12} container spacing={1} alignItems='center'>
-                                <Grid item>
-                                    <PhoneIcon />
-                                </Grid>
-                                <Grid item className={classes.input}>
-                                    <NumberFormat 
-                                        value={contact ? contact.phone : '55'} 
-                                        mask={"_"}
-                                        customInput={(info) => (
-                                            <TextField
-                                                fullWidth
-                                                color='secondary'
-                                                variant='filled'
-                                                label='Phone number'
-                                                value={info.value}
-                                                type='text'
-                                                onChange={info.onChange}
-                                                onBlur={info.onBlur}
-                                                onFocus={info.onFocus}
-                                                onKeyDown={info.onKeyDown}
-                                                onMouseUp={info.onMouseUp}
-                                            />
-                                        )} 
-                                        fixedDecimalScale={false}
-                                        decimalScale={undefined}
-                                        format={'+## ## #####-####'}
-                                        onBlur={(ev) => {
-                                            setContact({
-                                                ...contact,
-                                                phone: ev.target.value
-                                            });
-                                        }}
-                                    />
-                                </Grid>
+                            <Grid item className={classes.input}>
+                                <TextField
+                                    fullWidth
+                                    color='secondary'
+                                    label='Contact name'
+                                    defaultValue={contact.name}
+                                    type='text'
+                                    onBlur={(ev) => {
+                                        contact.name = ev.target.value;
+                                    }}
+                                />
+                            </Grid> 
+                        </Grid>
+                        <Grid container spacing={1} alignItems='center'>
+                            <Grid item>
+                                <PhoneIcon />
+                            </Grid>
+                            <Grid item className={classes.input}>
+                                <NumberFormat 
+                                    value={contact.phone.replace(/\D/gm, '')} 
+                                    mask={"_"}
+                                    customInput={(info) => (
+                                        <TextField
+                                            fullWidth
+                                            color='secondary'
+                                            label='Phone number'
+                                            value={info.value}
+                                            type='text'
+                                            onChange={info.onChange}
+                                            onBlur={info.onBlur}
+                                            onFocus={info.onFocus}
+                                            onKeyDown={info.onKeyDown}
+                                            onMouseUp={info.onMouseUp}
+                                        />
+                                    )} 
+                                    fixedDecimalScale={false}
+                                    decimalScale={undefined}
+                                    format={'+## ## #####-####'}
+                                    onBlur={(ev) => {
+                                        contact.phone = ev.target.value;
+                                    }}
+                                />
                             </Grid>
                         </Grid>
-                        :   <Spinner />
-                    }
-                    <Grid item container xs={12} justify='space-between'>
+                    </div>
+                    :   <Spinner />
+                }
+            </DialogContent>
+            <DialogActions className={classes.buttons}>                    
+                {
+                    createNew ? 
                         <Button
-                            variant='contained'
-                            color='secondary'
-                            startIcon={<AddCircleIcon/>}
-                            onClick={apiUpdate}
-                        >
-                            {createNew ? "Create new contact" : "Save changes"}
-                        </Button>
-                        <Button
-                            variant='outlined'
                             startIcon={<ClearIcon/>}
-                            onClick={props.routes.home}
+                            variant='outlined'
+                            onClick={close}
                         >
                             Cancel
                         </Button>
-                    </Grid>
-                </Grid>
-            </Paper>
-        </Container>
+                    :   <Button
+                            color='secondary'
+                            variant='outlined'
+                            startIcon={<DeleteIcon/>}
+                            onClick={apiDelete}
+                        >
+                            Delete
+                        </Button>
+                }
+                <Button
+                    color='secondary'
+                    variant='contained'
+                    startIcon={<AddCircleIcon/>}
+                    onClick={apiUpdate}
+                >
+                    {createNew ? "Create" : "Save"}
+                </Button>
+            </DialogActions>
+        </Dialog>
     );
 }

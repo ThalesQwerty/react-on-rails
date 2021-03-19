@@ -8,12 +8,13 @@ import {
     Container, 
     Grid,
     Paper,
-    Button
+    Button,
 } from '@material-ui/core';
 
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
 import Header from '../components/Header';
+import Navbar from '../components/Navbar';
 import ContactList from '../components/ContactList';
 import Spinner from '../components/Spinner';
 
@@ -29,58 +30,93 @@ const useStyles = makeStyles((theme) => ({
     },
     paper: {
         height: '100%',
-        padding: theme.spacing(2)
-    },
-    childContainer: {
-        width: '100%',
-        height: '100%',
+        padding: theme.spacing(0),
         display: 'flex',
         flexDirection: 'column'
     },
+    childContainer: {
+        display: 'flex',
+        height: '100%',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        flexGrow: 1,
+        flexShrink: 1,
+        overflow: 'hidden'
+    },
     contactList: {
         display: 'flex',
-        flexGrow: 1
+        maxHeight: '100%',
+        paddingLeft: theme.spacing(2),
+        paddingRight: theme.spacing(2),
+        flexGrow: 1,
+        flexShrink: 1,
+        overflowY: 'scroll',
+        overflowX: 'hidden',
+        borderBottom: 'solid 1px rgba(0,0,0,0.5)'
+    },
+    addNew: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '12rem',
+        flexGrow: 0
     }
 }));
 
 export default function Home(props) {
     const classes = useStyles();
 
-    const [contacts, setContacts] = useState(null);
+    const contacts = props.contacts;
 
     if (!contacts) {
-        axios.get("/api/contacts").then((resp) => {
-            setContacts(resp.data);
-        });
+        props.updateList();
     }
-    
+
     return (
         <Container className={classes.container}>
             <Paper variant='elevation' className={classes.paper}>
+                <Navbar />
+                {/* <Header
+                    title="Contacts on Rails"
+                    subtitle="Powered by React"
+                >
+                    <div>
+                        <Button 
+                            variant='contained' 
+                            color='secondary' 
+                            startIcon={<AddCircleIcon/>}
+                            onClick={props.methods.addContact}
+                        >
+                            Add new contact
+                        </Button>
+                    </div>
+                </Header> */}
                 <div className={classes.childContainer}>
-                    <Header
-                        title="Contacts on Rails"
-                        subtitle="Powered by React"
-                    >
-                        <div>
-                            <Button 
-                                variant='contained' 
-                                color='secondary' 
-                                startIcon={<AddCircleIcon/>}
-                                onClick={props.routes.addContact}
-                            >
-                                Add new contact
-                            </Button>
-                        </div>
-                    </Header>
                     { 
-                        contacts ? 
-                            <ContactList
-                                className={classes.contactList}
-                                contacts={contacts}
-                                clickHandler={props.routes.editContact}
-                            /> 
-                        :   <Spinner />
+                        contacts ? (
+                            contacts.length > 0 ?
+                                <div className={classes.contactList}>
+                                    <ContactList
+                                        contacts={contacts}
+                                        clickHandler={props.methods.editContact}
+                                    /> 
+                                </div> 
+                            : null
+                        ) : <Spinner />
+                    }
+                    {
+                        contacts ? (
+                            <div className={classes.addNew}>
+                                <Button 
+                                    variant='contained' 
+                                    color='secondary' 
+                                    startIcon={<AddCircleIcon/>}
+                                    onClick={props.methods.addContact}
+                                >
+                                    Add new contact
+                                </Button>
+                            </div>
+                        ) : null
                     }
                 </div>
             </Paper>

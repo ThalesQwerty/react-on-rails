@@ -16,8 +16,7 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'left',
         padding: 0,
         height: '100%',
-        overflowY: 'scroll',
-        overflowX: 'hidden'
+        width: '100%'
     }
 }));
 
