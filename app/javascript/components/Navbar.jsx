@@ -84,8 +84,8 @@ export default function Navbar(props) {
                         
                 </Typography>
                 <div className={classes.buttons}>
-                    <Tooltip title="See on GitHub" placement="top">
-                        <IconButton onClick={() => window.open("https://github.com/ThalesQwerty")}>
+                    <Tooltip title="View source on GitHub" placement="top">
+                        <IconButton onClick={() => window.open("https://github.com/ThalesQwerty/react-on-rails")}>
                             <GitHubIcon />
                         </IconButton>
                     </Tooltip>
