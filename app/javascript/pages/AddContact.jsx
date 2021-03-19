@@ -157,7 +157,7 @@ export default function AddContact(props) {
                             </Grid>
                             <Grid item className={classes.input}>
                                 <NumberFormat 
-                                    value={contact.phone.replace(/\D/gm, '')} 
+                                    defaultValue={contact.phone.replace(/\D/gm, '')} 
                                     mask={"_"}
                                     customInput={(info) => (
                                         <TextField
