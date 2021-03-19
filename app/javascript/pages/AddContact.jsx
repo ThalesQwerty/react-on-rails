@@ -65,29 +65,39 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+let info = null;
+
 export default function AddContact(props) {
     const classes = useStyles();
 
     const createNew = props.contact == null;
     const contact = props.contact || {
         name: '', 
-        phone: '55',
+        phone: '',
         email: '',
         observations: ''
     };
 
+    if (info == null && props.open) {
+        info = contact;
+    }
+
+    console.log("INFO", info);
+    console.log("CONTACT", contact);
+
     const [focus, setFocus] = useState(0);
 
-    console.log(contact);
-
     function apiUpdate() {
-        axios.post('/api/contacts/' + (createNew ? '' : contact.id), contact).then((resp) => {
-            console.log(contact);
+        axios.post('/api/contacts/' + (createNew ? '' : contact.id), info).then((resp) => {
             props.setSnack({
                 message: resp.data.message,
                 severity: resp.data.success ? 'success' : 'error'
             });
-            if (resp.data.success) props.methods.save();
+
+            if (resp.data.success) {
+                info = null;
+                props.methods.save();
+            }
         }).catch((error) => {
             console.log(error);
             props.setSnack({
@@ -104,7 +114,11 @@ export default function AddContact(props) {
                     message: resp.data.message,
                     severity: resp.data.success ? 'success' : 'error'
                 });
-                if (resp.data.success) props.methods.save();
+                
+                if (resp.data.success) {
+                    info = null;
+                    props.methods.save();
+                }
             });
         }
     }
@@ -112,6 +126,7 @@ export default function AddContact(props) {
     console.log(props.id);
 
     function close() {
+        info = null;
         props.methods.cancel();
     }
     
@@ -146,7 +161,7 @@ export default function AddContact(props) {
                                     })}
                                     onBlur={(ev) => {
                                         setFocus(0);
-                                        contact.name = ev.target.value;
+                                        info.name = ev.target.value;
                                     }}
                                 />
                             </Grid> 
@@ -181,7 +196,7 @@ export default function AddContact(props) {
                                     })}
                                     onBlur={(ev) => {
                                         setFocus(0);
-                                        contact.phone = ev.target.value;
+                                        info.phone = ev.target.value;
                                     }}
                                 />
                             </Grid>
@@ -202,7 +217,7 @@ export default function AddContact(props) {
                                     })}
                                     onBlur={(ev) => {
                                         setFocus(0);
-                                        contact.email = ev.target.value;
+                                        info.email = ev.target.value;
                                     }}
                                 />
                             </Grid> 
@@ -225,7 +240,7 @@ export default function AddContact(props) {
                                     })}
                                     onBlur={(ev) => {
                                         setFocus(0);
-                                        contact.observations = ev.target.value;
+                                        info.observations = ev.target.value;
                                     }}
                                 />
                             </Grid> 
