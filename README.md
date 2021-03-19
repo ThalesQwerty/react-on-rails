@@ -51,7 +51,6 @@ yarn install
 In order to run React, you'll need to also install Webpacker:
 
 ```shell
-bundle exec rails webpacker:install
 bundle exec rails webpacker:install:react
 ```
 
