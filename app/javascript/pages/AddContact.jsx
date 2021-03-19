@@ -31,7 +31,9 @@ import {
     Clear as ClearIcon,
     Phone as PhoneIcon,
     AccountCircle as AccountCircleIcon,
-    Delete as DeleteIcon
+    Delete as DeleteIcon,
+    Mail as MailIcon,
+    Subject as SubjectIcon
 } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
@@ -67,12 +69,18 @@ export default function AddContact(props) {
     const classes = useStyles();
 
     const createNew = props.contact == null;
-    const contact = props.contact || {id: null, name: '', phone: '55'};
+    const contact = props.contact || {
+        name: '', 
+        phone: '55',
+        email: '',
+        observations: ''
+    };
 
     console.log(contact);
 
     function apiUpdate() {
         axios.post('/api/contacts/' + (createNew ? '' : contact.id), contact).then((resp) => {
+            console.log(contact);
             props.setSnack({
                 message: resp.data.message,
                 severity: resp.data.success ? 'success' : 'error'
@@ -167,6 +175,42 @@ export default function AddContact(props) {
                                     }}
                                 />
                             </Grid>
+                        </Grid>
+                        <Grid container spacing={1} alignItems='center'>
+                            <Grid item>
+                                <MailIcon />
+                            </Grid>
+                            <Grid item className={classes.input}>
+                                <TextField
+                                    fullWidth
+                                    color='secondary'
+                                    label='Email address'
+                                    defaultValue={contact.email}
+                                    type='text'
+                                    onBlur={(ev) => {
+                                        contact.email = ev.target.value;
+                                    }}
+                                />
+                            </Grid> 
+                        </Grid>
+                        <Grid container spacing={1} alignItems='center'>
+                            <Grid item>
+                                <SubjectIcon />
+                            </Grid>
+                            <Grid item className={classes.input}>
+                                <TextField
+                                    fullWidth
+                                    color='secondary'
+                                    label='Additional details'
+                                    defaultValue={contact.observations}
+                                    type='text'
+                                    multiline
+                                    rowsMax={4}
+                                    onBlur={(ev) => {
+                                        contact.observations = ev.target.value;
+                                    }}
+                                />
+                            </Grid> 
                         </Grid>
                     </div>
                     :   <Spinner />

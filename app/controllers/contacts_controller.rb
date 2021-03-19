@@ -56,13 +56,23 @@ class ContactsController < ApplicationController
   end
 
   private def contact_info
-    params.permit(:id, :name, :phone)
+    params.permit(:id, :name, :phone, :email, :observations)
+  end
+
+  private def is_empty (obj)
+    if not obj
+      return true
+    elsif obj.to_s.length == 0
+      return true
+    else
+      return false
+    end
   end
 
   private def validate_input
     params[:name] = params[:name] ? (params[:name].strip! or params[:name]) : params[:name]
     
-    if not params[:name] or params[:name].to_s.length == 0
+    if is_empty(params[:name])
       return "You have to insert a name for the contact"
 
     elsif params[:name].to_s.length < 2
@@ -71,11 +81,14 @@ class ContactsController < ApplicationController
     elsif params[:name].to_s.length > 32
       return "Name cannot be greater than 32 characters"
 
-    elsif not params[:phone] or params[:phone].to_s.length == 0
+    elsif is_empty(params[:phone])
       return "You have to insert a phone number for the contact"
 
     elsif not params[:phone].to_s.match(/^\+\d{2}\s\d{2}\s\d{5}\-\d{4}$/)
       return "Invalid phone number!"
+
+    elsif not is_empty(params[:email]) and not params[:email].to_s.match(/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/)
+      return "Invalid email address!"
 
     else
       return nil
