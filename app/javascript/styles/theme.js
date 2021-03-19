@@ -5,6 +5,10 @@ export const theme = createMuiTheme({
 	spacing: 16,
 	palette: {
 		type: 'dark',
+		common: {
+			white: '#ffffff',
+			black: '#000000'
+		},
 		primary: {
 			main: '#9925f8',
 			dark: '#8007e4',
