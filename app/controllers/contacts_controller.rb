@@ -1,6 +1,6 @@
 class ContactsController < ApplicationController
   def index
-    render json: Contact.all
+    render json: Contact.all.order("name ASC")
   end
 
   def show
