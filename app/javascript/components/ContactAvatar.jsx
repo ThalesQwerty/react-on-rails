@@ -5,6 +5,8 @@ import 'fontsource-roboto';
 import { makeStyles } from '@material-ui/styles';
 import { Typography } from '@material-ui/core';
 
+import NumberFormat from 'react-number-format';
+
 const useStyles = makeStyles((theme) => ({
     circle: {
         width: theme.typography.fontSize * 2.5,
@@ -28,7 +30,7 @@ export default function ContactList(props) {
     return (
         <div className={classes.circle}>
             <Typography variant="h6">
-                { props.name[0].toUpperCase() }
+                { props.name ? props.name[0].toUpperCase() : "?" }
             </Typography>
         </div>
     );

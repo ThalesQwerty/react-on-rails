@@ -6426,6 +6426,13 @@ react-is@^16.7.0, react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.1.tgz#5b3531bd76a645a4c9fb6e693ed36419e3301339"
   integrity sha512-NAnt2iGDXohE5LI7uBnLnqvLQMtzhkiAOLXTmv+qnF9Ky7xAPcX8Up/xWIhxvLVGJvuLiNc4xQLtuqDRzb4fSA==
 
+react-number-format@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/react-number-format/-/react-number-format-4.5.0.tgz#3fc7b544530cf953a858c1d7a585f12e4ef6095e"
+  integrity sha512-QnZpikIClOZEDSLJciUl3qDvguQn+jOO/b3dqBimnHRN4qNan8mo4/9iVM7QC6YwqpHQ9lg5I3yFB6bBVusdhw==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-transition-group@^4.4.0:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.1.tgz#63868f9325a38ea5ee9535d828327f85773345c9"

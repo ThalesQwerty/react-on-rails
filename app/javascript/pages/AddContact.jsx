@@ -19,6 +19,8 @@ import {
 import Header from '../components/Header';
 import Spinner from '../components/Spinner';
 
+import NumberFormat from 'react-number-format';
+
 import { 
     AddCircle as AddCircleIcon,
     Clear as ClearIcon,
@@ -98,7 +100,7 @@ export default function Index(props) {
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <Header
-                            title={createNew ? 'New contact' : 'Edit contact'}
+                            title={createNew ? 'New contact!' : 'Edit contact'}
                             subtitle=''
                         >
                             {
@@ -140,14 +142,28 @@ export default function Index(props) {
                                     <PhoneIcon />
                                 </Grid>
                                 <Grid item className={classes.input}>
-                                    <TextField
-                                        fullWidth
-                                        color='secondary'
-                                        variant='filled'
-                                        label='Phone number'
-                                        value={contact ? contact.phone : ''}
-                                        type='text'
-                                        onChange={(ev) => {
+                                    <NumberFormat 
+                                        value={contact ? contact.phone : '55'} 
+                                        mask={"_"}
+                                        customInput={(info) => (
+                                            <TextField
+                                                fullWidth
+                                                color='secondary'
+                                                variant='filled'
+                                                label='Phone number'
+                                                value={info.value}
+                                                type='text'
+                                                onChange={info.onChange}
+                                                onBlur={info.onBlur}
+                                                onFocus={info.onFocus}
+                                                onKeyDown={info.onKeyDown}
+                                                onMouseUp={info.onMouseUp}
+                                            />
+                                        )} 
+                                        fixedDecimalScale={false}
+                                        decimalScale={undefined}
+                                        format={'+## ## #####-####'}
+                                        onBlur={(ev) => {
                                             setContact({
                                                 ...contact,
                                                 phone: ev.target.value
