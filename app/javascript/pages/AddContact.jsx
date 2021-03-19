@@ -33,7 +33,8 @@ import {
     AccountCircle as AccountCircleIcon,
     Delete as DeleteIcon,
     Mail as MailIcon,
-    Subject as SubjectIcon
+    Subject as SubjectIcon,
+    Add as AddIcon,
 } from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
@@ -62,33 +63,76 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         paddingRight: 0,
         marginBottom: theme.spacing(1)
+    },
+    removeInputButton: {
+        padding: 0
     }
 }));
 
 let info = null;
 
+const emptyFields = {
+    phones: [
+        {id: null, value: ''}
+    ],
+    emails: [
+        {id: null, value: ''}
+    ],
+}
+
+const defaultContact = {
+    name: '', 
+    observations: '',
+    fields: emptyFields
+};
+
+const fieldType = {
+    phone: 'phone',
+    email: 'email'
+};
+
 export default function AddContact(props) {
     const classes = useStyles();
 
+    const [fields, setFields] = useState(emptyFields);
     const createNew = props.contact == null;
-    const contact = props.contact || {
-        name: '', 
-        phone: '',
-        email: '',
-        observations: ''
-    };
+    const contact = props.contact || defaultContact;
 
-    if (info == null && props.open) {
+    if (info == null && props.open && props.canUpdateFields) {
         info = contact;
+        setFields(contact.fields);
     }
-
-    console.log("INFO", info);
-    console.log("CONTACT", contact);
 
     const [focus, setFocus] = useState(0);
 
+    console.log(fields);
+
+    function apiPostFields(fields) {
+        return [
+            ...fields.phones.map(field => ({id: field.id, value: field.value, contact_type: 'phone'})),
+            ...fields.emails.map(field => ({id: field.id, value: field.value, contact_type: 'email'})),
+        ]
+    }
+
     function apiUpdate() {
-        axios.post('/api/contacts/' + (createNew ? '' : contact.id), info).then((resp) => {
+        const payload = {
+            ...info,
+            fields: undefined,
+            addFields: apiPostFields(fields),
+            deleteFields: emptyFields
+        };
+        
+        for (const type in payload.deleteFields) {
+            payload.deleteFields[type] = contact.fields[type].filter(oldField => {
+                return fields[type].filter(field => field.id == oldField.id).length == 0;
+            });
+        }
+
+        payload.deleteFields = apiPostFields(payload.deleteFields);
+
+        console.log("Update", payload);
+
+        axios.post('/api/contacts/' + (createNew ? '' : contact.id), payload).then((resp) => {
             props.setSnack({
                 message: resp.data.message,
                 severity: resp.data.success ? 'success' : 'error'
@@ -123,10 +167,9 @@ export default function AddContact(props) {
         }
     }
 
-    console.log(props.id);
-
     function close() {
         info = null;
+        // setFields(emptyFields);
         props.methods.cancel();
     }
     
@@ -159,69 +202,161 @@ export default function AddContact(props) {
                                     onFocus={(ev => {
                                         setFocus(1);
                                     })}
+                                    onChange={(ev) => {
+                                        info.name = ev.target.value;
+                                    }}
                                     onBlur={(ev) => {
                                         setFocus(0);
-                                        info.name = ev.target.value;
                                     }}
                                 />
                             </Grid> 
                         </Grid>
-                        <Grid container spacing={1} alignItems='center'>
-                            <Grid item>
-                                <PhoneIcon color={focus == 2 ? 'secondary' : undefined} />
-                            </Grid>
-                            <Grid item className={classes.input}>
-                                <NumberFormat 
-                                    defaultValue={contact.phone.replace(/\D/gm, '')} 
-                                    mask={"_"}
-                                    customInput={(info) => (
+                        {
+                            fields.phones.map((field, i) => (
+                                <Grid container spacing={1} alignItems='center' key={i}>
+                                    <Grid item>
+                                        {
+                                            i == 0 ? 
+                                                <PhoneIcon 
+                                                    color={focus == fieldType.phone + i ? 'secondary' : undefined} 
+                                                />
+                                            :   <IconButton 
+                                                    color='primary' 
+                                                    className={classes.removeInputButton}
+                                                    onClick={(ev) => {
+                                                        let newFields = {...fields};
+                                                        newFields.phones.splice(i, 1);
+
+                                                        setFields(newFields);
+                                                    }}
+                                                >
+                                                    <ClearIcon />
+                                                </IconButton>
+                                        }
+                                    </Grid>
+                                    <Grid item className={classes.input}>
+                                        <NumberFormat 
+                                            defaultValue={field.value ? field.value.replace(/\D/gm, '') : ''} 
+                                            mask={"_"}
+                                            customInput={(info) => (
+                                                <TextField
+                                                    fullWidth
+                                                    color='secondary'
+                                                    label={i > 0 ? 'Phone number #' + (i + 1) : 'Phone number'}
+                                                    value={info.value}
+                                                    type='text'
+                                                    onChange={info.onChange}
+                                                    onBlur={info.onBlur}
+                                                    onFocus={info.onFocus}
+                                                    onKeyDown={info.onKeyDown}
+                                                    onMouseUp={info.onMouseUp}
+                                                />
+                                            )} 
+                                            fixedDecimalScale={false}
+                                            decimalScale={undefined}
+                                            format={'+## ## #####-####'}
+                                            onFocus={(ev) => {
+                                                setFocus(fieldType.phone + i);
+                                            }}
+                                            onChange={(ev) => {
+                                                const newFields = fields;
+                                                newFields.phones[i].value = ev.target.value;
+
+                                                setFields(newFields);
+                                            }}
+                                            onBlur={(ev) => {
+                                                setFocus(0);
+                                            }}
+                                        />
+                                    </Grid>
+                                    {
+                                        i == fields.phones.length - 1 ? 
+                                            <Grid item>
+                                                <IconButton 
+                                                    color='secondary'
+                                                    onClick={() => {
+                                                        setFields({
+                                                            ...fields,
+                                                            phones: [
+                                                                ...fields.phones,
+                                                                {id: null, value: defaultContact.phone}
+                                                            ]
+                                                        });
+                                                    }}
+                                                >
+                                                    <AddIcon />
+                                                </IconButton>
+                                            </Grid>
+                                        : null
+                                    }
+                                </Grid>
+                            ))
+                        }
+                        {
+                            fields.emails.map((field, i) => (
+                                <Grid container spacing={1} alignItems='center' key={i}>
+                                    <Grid item>
+                                        {
+                                            i == 0 ? 
+                                                <MailIcon color={focus == 3 ? 'secondary' : undefined} />
+                                            :   <IconButton 
+                                                    color='primary' 
+                                                    className={classes.removeInputButton}
+                                                    onClick={(ev) => {
+                                                        let newFields = {...fields};
+                                                        newFields.emails.splice(i, 1);
+
+                                                        setFields(newFields);
+                                                    }}
+                                                >
+                                                    <ClearIcon />
+                                                </IconButton>
+                                        }
+                                    </Grid>
+                                    <Grid item className={classes.input}>
                                         <TextField
                                             fullWidth
                                             color='secondary'
-                                            label='Phone number'
-                                            value={info.value}
+                                            label={i > 0 ? 'Email address #' + (i + 1) : 'Email address'}
+                                            defaultValue={field.value}
                                             type='text'
-                                            onChange={info.onChange}
-                                            onBlur={info.onBlur}
-                                            onFocus={info.onFocus}
-                                            onKeyDown={info.onKeyDown}
-                                            onMouseUp={info.onMouseUp}
+                                            onFocus={(ev => {
+                                                setFocus(3);
+                                            })}
+                                            onChange={(ev) => {
+                                                const newFields = fields;
+                                                newFields.emails[i].value = ev.target.value;
+
+                                                setFields(newFields);
+                                            }}
+                                            onBlur={(ev) => {
+                                                setFocus(0);
+                                            }}
                                         />
-                                    )} 
-                                    fixedDecimalScale={false}
-                                    decimalScale={undefined}
-                                    format={'+## ## #####-####'}
-                                    onFocus={(ev => {
-                                        setFocus(2);
-                                    })}
-                                    onBlur={(ev) => {
-                                        setFocus(0);
-                                        info.phone = ev.target.value;
-                                    }}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid container spacing={1} alignItems='center'>
-                            <Grid item>
-                                <MailIcon color={focus == 3 ? 'secondary' : undefined} />
-                            </Grid>
-                            <Grid item className={classes.input}>
-                                <TextField
-                                    fullWidth
-                                    color='secondary'
-                                    label='Email address'
-                                    defaultValue={contact.email}
-                                    type='text'
-                                    onFocus={(ev => {
-                                        setFocus(3);
-                                    })}
-                                    onBlur={(ev) => {
-                                        setFocus(0);
-                                        info.email = ev.target.value;
-                                    }}
-                                />
-                            </Grid> 
-                        </Grid>
+                                    </Grid> 
+                                    {
+                                        i == fields.emails.length - 1? 
+                                            <Grid item>
+                                                <IconButton 
+                                                    color='secondary'
+                                                    onClick={() => {
+                                                        setFields({
+                                                            ...fields,
+                                                            emails: [
+                                                                ...fields.emails,
+                                                                {id: null, value: defaultContact.email}
+                                                            ]
+                                                        });
+                                                    }}
+                                                >
+                                                    <AddIcon />
+                                                </IconButton>
+                                            </Grid>
+                                        : null
+                                    }
+                                </Grid>
+                            ))
+                        }
                         <Grid container spacing={1} alignItems='center'>
                             <Grid item>
                                 <SubjectIcon color={focus == 4 ? 'secondary' : undefined} />
@@ -238,9 +373,11 @@ export default function AddContact(props) {
                                     onFocus={(ev => {
                                         setFocus(4);
                                     })}
+                                    onChange={(ev) => {
+                                        info.observations = ev.target.value;
+                                    }}
                                     onBlur={(ev) => {
                                         setFocus(0);
-                                        info.observations = ev.target.value;
                                     }}
                                 />
                             </Grid> 

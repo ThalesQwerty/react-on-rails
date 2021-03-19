@@ -24,6 +24,8 @@ const pages = {
     addContact: 'addContact'
 }
 
+let canUpdateFields = true;
+
 export default function Index() {
     const [page, setPage] = useState(pages.home);
     const [contacts, setContacts] = useState(null);
@@ -50,7 +52,16 @@ export default function Index() {
     function loadContact(id) {
         if (id != null) {
             axios.get('/api/contacts/' + id).then((resp) => {
-                setContact(resp.data);
+                const data = resp.data;
+                const contact = {
+                    ...data.contact,
+                    fields: {
+                        phones: data.fields.filter(field => field.contact_type == 'phone').map(field => ({id: field.id, value: field.value})),
+                        emails: data.fields.filter(field => field.contact_type == 'email').map(field => ({id: field.id, value: field.value}))
+                    }
+                };
+                console.log(contact);
+                setContact(contact);
                 setPage(pages.addContact);
             }).catch((error) => {
                 setSnack({
@@ -62,11 +73,13 @@ export default function Index() {
     }
 
     function updateList() {
+        canUpdateFields = false;
         axios.get('/api/contacts').then((resp) => {
+            canUpdateFields = true;
             setContacts(resp.data);
             setPage(pages.home);
         }).catch((error) => {
-            props.setSnack({
+            setSnack({
                 message: 'Failed to load contacts.',
                 severity: 'error'
             })
@@ -90,6 +103,7 @@ export default function Index() {
                 setSnack={(info) => setSnack({open: true, message: info.message, severity: info.severity})}
             />
             <AddContact 
+                canUpdateFields={canUpdateFields}
                 contact={contact}
                 open={page == pages.addContact}
                 methods={{
