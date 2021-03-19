@@ -66,16 +66,31 @@ const useStyles = makeStyles((theme) => ({
 export default function Home(props) {
     const classes = useStyles();
 
-    const contacts = props.contacts;
+    const [searchQuery, setSearchQuery] = useState('');
+    let contacts = props.contacts;
 
     if (!contacts) {
         props.updateList();
+    } else if (searchQuery) {
+        console.log(searchQuery, props.contacts);
+        contacts = props.contacts.filter(contact => {
+            return contact && 
+                (contact.name.toLowerCase().includes(searchQuery.toLowerCase()) || contact.phone.includes(searchQuery))
+        });
+    }
+
+    function search(ev) {
+        setSearchQuery(ev.target.value);
     }
 
     return (
         <Container className={classes.container}>
             <Paper variant='elevation' className={classes.paper}>
-                <Navbar />
+                <Navbar 
+                    methods={{
+                        search: search
+                    }}
+                />
                 {/* <Header
                     title="Contacts on Rails"
                     subtitle="Powered by React"
