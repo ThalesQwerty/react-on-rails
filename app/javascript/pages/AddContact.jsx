@@ -76,6 +76,8 @@ export default function AddContact(props) {
         observations: ''
     };
 
+    const [focus, setFocus] = useState(0);
+
     console.log(contact);
 
     function apiUpdate() {
@@ -130,7 +132,7 @@ export default function AddContact(props) {
                     <div>
                         <Grid container spacing={1} alignItems='center'>
                             <Grid item>
-                                <AccountCircleIcon />
+                                <AccountCircleIcon color={focus == 1 ? 'secondary' : undefined} />
                             </Grid>
                             <Grid item className={classes.input}>
                                 <TextField
@@ -139,7 +141,11 @@ export default function AddContact(props) {
                                     label='Contact name'
                                     defaultValue={contact.name}
                                     type='text'
+                                    onFocus={(ev => {
+                                        setFocus(1);
+                                    })}
                                     onBlur={(ev) => {
+                                        setFocus(0);
                                         contact.name = ev.target.value;
                                     }}
                                 />
@@ -147,7 +153,7 @@ export default function AddContact(props) {
                         </Grid>
                         <Grid container spacing={1} alignItems='center'>
                             <Grid item>
-                                <PhoneIcon />
+                                <PhoneIcon color={focus == 2 ? 'secondary' : undefined} />
                             </Grid>
                             <Grid item className={classes.input}>
                                 <NumberFormat 
@@ -170,7 +176,11 @@ export default function AddContact(props) {
                                     fixedDecimalScale={false}
                                     decimalScale={undefined}
                                     format={'+## ## #####-####'}
+                                    onFocus={(ev => {
+                                        setFocus(2);
+                                    })}
                                     onBlur={(ev) => {
+                                        setFocus(0);
                                         contact.phone = ev.target.value;
                                     }}
                                 />
@@ -178,7 +188,7 @@ export default function AddContact(props) {
                         </Grid>
                         <Grid container spacing={1} alignItems='center'>
                             <Grid item>
-                                <MailIcon />
+                                <MailIcon color={focus == 3 ? 'secondary' : undefined} />
                             </Grid>
                             <Grid item className={classes.input}>
                                 <TextField
@@ -187,7 +197,11 @@ export default function AddContact(props) {
                                     label='Email address'
                                     defaultValue={contact.email}
                                     type='text'
+                                    onFocus={(ev => {
+                                        setFocus(3);
+                                    })}
                                     onBlur={(ev) => {
+                                        setFocus(0);
                                         contact.email = ev.target.value;
                                     }}
                                 />
@@ -195,7 +209,7 @@ export default function AddContact(props) {
                         </Grid>
                         <Grid container spacing={1} alignItems='center'>
                             <Grid item>
-                                <SubjectIcon />
+                                <SubjectIcon color={focus == 4 ? 'secondary' : undefined} />
                             </Grid>
                             <Grid item className={classes.input}>
                                 <TextField
@@ -206,7 +220,11 @@ export default function AddContact(props) {
                                     type='text'
                                     multiline
                                     rowsMax={4}
+                                    onFocus={(ev => {
+                                        setFocus(4);
+                                    })}
                                     onBlur={(ev) => {
+                                        setFocus(0);
                                         contact.observations = ev.target.value;
                                     }}
                                 />
@@ -236,7 +254,7 @@ export default function AddContact(props) {
                         </Button>
                 }
                 <Button
-                    color='secondary'
+                    color='primary'
                     variant='contained'
                     startIcon={<AddCircleIcon/>}
                     onClick={apiUpdate}

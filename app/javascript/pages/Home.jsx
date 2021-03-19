@@ -109,7 +109,7 @@ export default function Home(props) {
                             <div className={classes.addNew}>
                                 <Button 
                                     variant='contained' 
-                                    color='secondary' 
+                                    color='primary'
                                     startIcon={<AddCircleIcon/>}
                                     onClick={props.methods.addContact}
                                 >
