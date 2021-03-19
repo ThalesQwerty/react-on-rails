@@ -22,13 +22,12 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         alignItems: 'center',
         width: '100vw',
-        maxWidth: 1000,
+        maxWidth: '100rem',
         height: '100vh',
-        maxHeight: 600,
+        maxHeight: '50rem',
         padding: 0,
     },
     paper: {
-        width: '100%',
         height: '100%',
         padding: theme.spacing(2)
     },
@@ -54,7 +53,6 @@ export default function Home(props) {
             setContacts(resp.data);
         });
     }
-    
     
     return (
         <Container className={classes.container}>

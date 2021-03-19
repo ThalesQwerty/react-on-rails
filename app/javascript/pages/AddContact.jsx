@@ -34,13 +34,13 @@ const useStyles = makeStyles((theme) => ({
         justifyContent: 'center',
         alignItems: 'center',
         width: '100vw',
-        maxWidth: 750,
+        maxWidth: '100rem',
         height: '100vh',
-        maxHeight: 600,
+        maxHeight: '50rem',
         padding: 0,
     },
     paper: {
-        width: '100%',
+        height: '100%',
         padding: theme.spacing(2)
     },
     input: {
@@ -100,7 +100,7 @@ export default function Index(props) {
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
                         <Header
-                            title={createNew ? 'New contact!' : 'Edit contact'}
+                            title={createNew ? 'New contact' : 'Edit contact'}
                             subtitle=''
                         >
                             {
