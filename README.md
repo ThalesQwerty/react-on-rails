@@ -34,11 +34,11 @@ If all of the commands above work, then everything's set to go!
 
 ### Download and configuration
 
-Open the terminal or command prompt in a folder of your preference, and clone the repository into your computer:
+Open the terminal or command prompt in a folder of your preference, and clone this repository into your computer:
 
 ```shell
-git clone https://github.com/ThalesQwerty/ruby-on-rails
-cd ruby-on-rails
+git clone https://github.com/ThalesQwerty/react-on-rails
+cd react-on-rails
 ```
 
 After that, install the dependencies:
